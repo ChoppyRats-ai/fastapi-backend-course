@@ -1,10 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
-from task_storage import TaskStorage  # Импортируем наш класс
-
+from task_storage import TaskStorage  
+from config import get_settings
 app = FastAPI()
 
+settings = get_settings()
+api_key = settings.JSONBIN_API_KEY
+bin_id = settings.JSONBIN_BIN_ID
 
 class Task(BaseModel):
     id: int
@@ -12,8 +15,8 @@ class Task(BaseModel):
     status: str
 
 
-task_storage = TaskStorage(api_key="Введите X-Master-Key от jsonbin.io",
-                           bin_id='Введите Bin ID от хранилища в jsonbin.io')
+task_storage = TaskStorage(api_key=api_key,
+                           bin_id=bin_id)
 
 @app.get("/tasks", response_model=List[Task])
 def get_tasks():
